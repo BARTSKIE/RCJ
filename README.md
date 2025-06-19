@@ -49,7 +49,7 @@ cd RCJ
 
 npm install
 
-###3. Start the App (Expo)
+### 3. Start the App (Expo)
 
 npx expo start
 
