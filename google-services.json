@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "783534998736",
+    "firebase_url": "https://rcjoptical-e5a73-default-rtdb.firebaseio.com",
+    "project_id": "rcjoptical-e5a73",
+    "storage_bucket": "rcjoptical-e5a73.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:783534998736:android:849fde0cbc5779ac0f4ad5",
+        "android_client_info": {
+          "package_name": "rcjoptical.com"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "783534998736-4et9oubtob5aiilp30tikcff6ic6qi5k.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBBF9RWsElohds7vQMB5W4YQXOlnuz4Mf8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "783534998736-4et9oubtob5aiilp30tikcff6ic6qi5k.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
