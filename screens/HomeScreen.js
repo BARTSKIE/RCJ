@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { 
   View, 
   Text, 
@@ -58,6 +58,11 @@ export default function HomeScreen({ navigation }) {
   const handleDateChange = (event, selectedDate) => {
     setShowDatePicker(false);
     if (selectedDate) {
+      // Check if selected date is Sunday (0 is Sunday in getDay())
+      if (selectedDate.getDay() === 0) {
+        Alert.alert('Closed on Sunday', 'Please select another day as we are closed on Sundays.');
+        return;
+      }
       setAppointmentDate(selectedDate);
     }
   };
@@ -73,13 +78,27 @@ export default function HomeScreen({ navigation }) {
     setAppointmentForm({...appointmentForm, [name]: value});
   };
 
-  const handleSubmitAppointment = async () => {
+   const handleSubmitAppointment = async () => {
     Keyboard.dismiss();
     setIsLoading(true);
     
     // Validate required fields
     if (!appointmentForm.fullName || !appointmentForm.contactNumber || !appointmentForm.appointmentType) {
       Alert.alert('Error', 'Please fill in all required fields');
+      setIsLoading(false);
+      return;
+    }
+
+    // Double check Sunday selection (in case user bypasses date picker)
+    if (appointmentDate.getDay() === 0) {
+      Alert.alert('Closed on Sunday', 'Please select another day as we are closed on Sundays.');
+      setIsLoading(false);
+      return;
+    }
+
+    // Check if time slot is selected
+    if (!appointmentTime) {
+      Alert.alert('Error', 'Please select a preferred time slot');
       setIsLoading(false);
       return;
     }
@@ -96,7 +115,7 @@ export default function HomeScreen({ navigation }) {
         contactNumber: appointmentForm.contactNumber,
         email: appointmentForm.email || '',
         date: appointmentDate.toDateString(),
-        time: appointmentTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+        time: appointmentTime,
         appointmentType: appointmentForm.appointmentType,
         additionalNotes: appointmentForm.additionalNotes || '',
         status: 'pending',
@@ -294,7 +313,7 @@ export default function HomeScreen({ navigation }) {
                     value={appointmentDate}
                     mode="date"
                     display="default"
-                    minimumDate={new Date()}
+                    minimumDate={new Date()} // This prevents selecting past dates
                     onChange={handleDateChange}
                   />
                 )}
@@ -308,23 +327,18 @@ export default function HomeScreen({ navigation }) {
                       key={index}
                       style={[
                         styles.timeSlotButton,
-                        appointmentTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) === slot && 
-                        styles.selectedTimeSlot
+                        appointmentTime === slot && styles.selectedTimeSlot
                       ]}
                       onPress={() => {
-                        const [time, modifier] = slot.split(' ');
-                        let [hours, minutes] = time.split(':');
-                        hours = parseInt(hours);
-                        if (modifier === 'PM' && hours < 12) hours += 12;
-                        if (modifier === 'AM' && hours === 12) hours = 0;
-                        
-                        const newTime = new Date(appointmentTime);
-                        newTime.setHours(hours);
-                        newTime.setMinutes(parseInt(minutes));
-                        setAppointmentTime(newTime);
+                        setAppointmentTime(slot);
                       }}
                     >
-                      <Text style={styles.timeSlotText}>{slot}</Text>
+                      <Text style={[
+                        styles.timeSlotText,
+                        appointmentTime === slot && styles.selectedTimeSlotText
+                      ]}>
+                        {slot}
+                      </Text>
                     </TouchableOpacity>
                   ))}
                 </View>
@@ -587,5 +601,26 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontSize: 16,
     fontWeight: '600',
+  },
+  timeSlotButton: {
+    backgroundColor: '#fff',
+    borderRadius: 8,
+    padding: 10,
+    marginBottom: 8,
+    borderWidth: 1,
+    borderColor: '#ddd',
+    width: '30%',
+    alignItems: 'center',
+  },
+  selectedTimeSlot: {
+    backgroundColor: '#6c5ce7',
+    borderColor: '#6c5ce7',
+  },
+  timeSlotText: {
+    color: '#2f3640',
+  },
+  selectedTimeSlotText: {
+    color: '#fff',
+    fontWeight: 'bold',
   },
 });
